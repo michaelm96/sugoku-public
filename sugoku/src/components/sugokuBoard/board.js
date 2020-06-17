@@ -5,25 +5,33 @@ import {
   View,
   TextInput,
   Dimensions,
+  ScrollView,
   Button,
   Alert,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setBoard,
-  setBoard2,
   updateBoard2,
   solveBoard,
+  setDifficulty,
 } from "../../../store/actions/sugokuActions";
-import { setStatus } from "../../../store/actions/userActions"
+import { setStatus } from "../../../store/actions/userActions";
 
 const Board = (props) => {
   const windowWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();
-  const { navigate } = props.props.navigation
+  const { navigate } = props.props.navigation;
   const name = useSelector((state) => state.user.user);
   const board = useSelector((state) => state.sugoku.board);
   const board2 = useSelector((state) => state.sugoku.board2);
+  const difficulty = useSelector((state) => state.sugoku.difficulty);
+
+  useEffect(() => {
+    dispatch(setBoard(difficulty));
+  }, [difficulty]);
+
+  //Board thingy
   const encodeBoard = (board) =>
     board.reduce(
       (result, row, i) =>
@@ -39,21 +47,14 @@ const Board = (props) => {
       .map((key) => key + "=" + `%5B${encodeBoard(params[key])}%5D`)
       .join("&");
 
-  useEffect(() => {
-    dispatch(setBoard());
-  }, []);
-
+  //STYLES
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#fff",
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: "grey",
     },
     container1: {
       flex: 1,
-      backgroundColor: "#fff",
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "row",
@@ -70,6 +71,7 @@ const Board = (props) => {
       borderWidth: 2,
       flexDirection: "row",
       flexWrap: "wrap",
+      margin: 2,
     },
     boxder1: {
       backgroundColor: "white",
@@ -83,22 +85,73 @@ const Board = (props) => {
       textAlign: "center",
     },
     title: {
-      marginBottom: 100,
       fontWeight: "bold",
       fontSize: 0.1 * windowWidth,
+      textAlign: "center",
+    },
+    difficulty: {
+      marginBottom: 20,
+      marginTop: 20,
+      fontWeight: "bold",
+      fontSize: 0.05 * windowWidth,
+      textAlign: "center",
     },
     name: {
       fontWeight: "bold",
       fontSize: 0.1 * windowWidth,
+      textAlign: "center",
+      color: "lightblue"
+    },
+    difButton: {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
     },
   });
+  //STYLES END
 
+  //return here
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>SUGOKU</Text>
-      <Text style={styles.name}>Hi,{name}</Text>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>
+        <Text style={{ color: "red" }}>S</Text>
+        <Text style={{ color: "orange" }}>U</Text>
+        <Text style={{ color: "yellow" }}>G</Text>
+        <Text style={{ color: "green" }}>O</Text>
+        <Text style={{ color: "blue" }}>K</Text>
+        <Text style={{ color: "indigo" }}>U</Text>
+      </Text>
+      <Text style={styles.difficulty}>
+        Difficulty:{" "}
+        {(difficulty === "easy" && (
+          <Text style={{ color: "green" }}>{difficulty}</Text>
+        )) ||
+          (difficulty === "medium" && (
+            <Text style={{ color: "blue" }}>{difficulty}</Text>
+          )) ||
+          (difficulty === "hard" && (
+            <Text style={{ color: "red" }}>{difficulty}</Text>
+          ))}
+      </Text>
+      <View style={styles.difButton}>
+        <Button
+          color="green"
+          title="Easy"
+          onPress={() => dispatch(setDifficulty("easy"))}
+        />
+        <Button
+          color="blue"
+          title="Medium"
+          onPress={() => dispatch(setDifficulty("medium"))}
+        />
+        <Button
+          color="red"
+          title="Hard"
+          onPress={() => dispatch(setDifficulty("hard"))}
+        />
+      </View>
+      <Text style={styles.name}>Hi, {name}</Text>
       <View style={styles.container1}>
-        {board === [] && <Text>Loading...</Text>}
         {board.map((ele, i) => {
           return (
             <View key={i} style={styles.boxder}>
@@ -127,6 +180,7 @@ const Board = (props) => {
           );
         })}
         <Button
+          color="#090696"
           title="Validate"
           onPress={() =>
             fetch("https://sugoku.herokuapp.com/validate", {
@@ -138,14 +192,14 @@ const Board = (props) => {
             })
               .then((response) => response.json())
               .then((response) => {
-                alert(response.status);
-                dispatch(setStatus(response.status))
-                navigate("Finish")
+                dispatch(setStatus(response.status));
+                navigate("Finish");
               })
               .catch((err) => console.log(err))
           }
         />
         <Button
+          color="#c6c600"
           title="Solve Now"
           onPress={() =>
             fetch("https://sugoku.herokuapp.com/solve", {
@@ -163,7 +217,7 @@ const Board = (props) => {
           }
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

@@ -1,8 +1,8 @@
-import { SET_BOARD, SET_BOARD2, UPDATE_BOARD2,SOLVE_BOARD } from "../actionType/";
+import { SET_BOARD, SET_BOARD2, UPDATE_BOARD2,SOLVE_BOARD, SET_DIFFICULTY } from "../actionType/";
 
-export function setBoard() {
+export function setBoard(difficulty) {
   return (dispatch, getState) => {
-    fetch("https://sugoku.herokuapp.com/board?difficulty=easy")
+    fetch(`https://sugoku.herokuapp.com/board?difficulty=${difficulty}`)
       .then((res) => res.json())
       .then((data) => {
         dispatch({
@@ -32,6 +32,15 @@ export function solveBoard(solvedBoard) {
     dispatch({
       type: SOLVE_BOARD,
       payload: solvedBoard,
+    });
+  };
+}
+
+export function setDifficulty(difficulty) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: SET_DIFFICULTY,
+      payload: difficulty,
     });
   };
 }

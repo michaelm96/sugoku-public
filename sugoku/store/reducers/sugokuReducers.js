@@ -3,11 +3,13 @@ import {
   SET_BOARD2,
   UPDATE_BOARD2,
   SOLVE_BOARD,
+  SET_DIFFICULTY,
 } from "../actionType";
 
 const initialState = {
   board: [],
   board2: [],
+  difficulty: "easy",
 };
 
 export default sugokuReducers = (state = initialState, action) => {
@@ -23,6 +25,9 @@ export default sugokuReducers = (state = initialState, action) => {
     }
     case SOLVE_BOARD: {
       return { ...state, board: action.payload };
+    }
+    case SET_DIFFICULTY: {
+      return { ...state, difficulty: action.payload };
     }
     default: {
       return state;
