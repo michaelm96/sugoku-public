@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import { setName } from "../../../store/actions/userActions";
+import { setDifficulty } from "../../../store/actions/sugokuActions";
 import { useDispatch, Provider } from "react-redux";
 import store from "../../../store/store";
 
@@ -13,9 +14,12 @@ function Home(props) {
     setNameText(text);
   };
 
-  const submitName = async () => {
-    await dispatch(setName(nameText));
-    navigate("Sugoku");
+  const submitNameAndDifficulty = async (dif) => {
+    // await dispatch(setName(nameText));
+    navigate("Sugoku", {
+      name: nameText,
+      difficulty: dif,
+    });
   };
 
   return (
@@ -28,14 +32,21 @@ function Home(props) {
       }}
     >
       <Text style={{ marginBottom: "50%", fontSize: 50, fontWeight: "100" }}>
-      <Text style={{ color: "red" }}>S</Text>
+        <Text style={{ color: "red" }}>S</Text>
         <Text style={{ color: "orange" }}>U</Text>
         <Text style={{ color: "yellow" }}>G</Text>
         <Text style={{ color: "green" }}>O</Text>
         <Text style={{ color: "blue" }}>K</Text>
         <Text style={{ color: "indigo" }}>U</Text>
       </Text>
-      <Text style={{ marginBottom: "10%", fontSize: 20, fontWeight: "100", color: "lightblue" }}>
+      <Text
+        style={{
+          marginBottom: "10%",
+          fontSize: 20,
+          fontWeight: "100",
+          color: "lightblue",
+        }}
+      >
         Input Your Name:
       </Text>
       <TextInput
@@ -45,18 +56,48 @@ function Home(props) {
           width: 200,
           height: 30,
           textAlign: "center",
-          marginBottom: "5%"
+          marginBottom: "5%",
         }}
       />
-      <Button
-        disabled={!nameText.length ? true : false}
-        onPress={() => submitName()}
-        title="Enter the game"
-      ></Button>
+      <View style={styles.difButton}>
+        <Button
+          disabled={!nameText.length ? true : false}
+          color="green"
+          title="Easy Mode"
+          onPress={() => {
+            submitNameAndDifficulty("easy");
+            dispatch(setDifficulty("easy"));
+          }}
+        />
+        <Button
+          disabled={!nameText.length ? true : false}
+          color="blue"
+          title="Medium Mode"
+          onPress={() => {
+            submitNameAndDifficulty("medium");
+            dispatch(setDifficulty("medium"));
+          }}
+        />
+        <Button
+          disabled={!nameText.length ? true : false}
+          color="red"
+          title="Hard Mode"
+          onPress={() => {
+            submitNameAndDifficulty("hard");
+            dispatch(setDifficulty("hard"));
+          }}
+        />
+      </View>
     </View>
   );
 }
 
 export default Home;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  difButton: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+});

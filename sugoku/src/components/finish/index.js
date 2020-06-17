@@ -17,7 +17,7 @@ const Finish = (props) => {
             <Text style={styles.status}>Your sugoku is {status}</Text>
             <Button style={styles.button} onPress={() => {
                 dispatch(setBoard(difficulty))
-                navigate('Sugoku')
+                navigate('Home')
             }} title="Try Again"></Button>
         </View>
     )

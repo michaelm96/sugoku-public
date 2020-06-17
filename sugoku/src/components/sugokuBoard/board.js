@@ -22,14 +22,16 @@ const Board = (props) => {
   const windowWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();
   const { navigate } = props.props.navigation;
-  const name = useSelector((state) => state.user.user);
+  const { name } = props.props.route.params;
   const board = useSelector((state) => state.sugoku.board);
   const board2 = useSelector((state) => state.sugoku.board2);
-  const difficulty = useSelector((state) => state.sugoku.difficulty);
+  const { difficulty } = props.props.route.params;
+  const [text, setText] = useState("");
 
   useEffect(() => {
     dispatch(setBoard(difficulty));
   }, [difficulty]);
+
 
   //Board thingy
   const encodeBoard = (board) =>
@@ -76,8 +78,6 @@ const Board = (props) => {
     boxder1: {
       backgroundColor: "white",
       justifyContent: "center",
-      width: "33.3%",
-      height: "33.3%",
       borderColor: "#090696",
       borderWidth: 2,
       flexDirection: "row",
@@ -100,12 +100,7 @@ const Board = (props) => {
       fontWeight: "bold",
       fontSize: 0.1 * windowWidth,
       textAlign: "center",
-      color: "lightblue"
-    },
-    difButton: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "center",
+      color: "lightblue",
     },
   });
   //STYLES END
@@ -133,28 +128,11 @@ const Board = (props) => {
             <Text style={{ color: "red" }}>{difficulty}</Text>
           ))}
       </Text>
-      <View style={styles.difButton}>
-        <Button
-          color="green"
-          title="Easy"
-          onPress={() => dispatch(setDifficulty("easy"))}
-        />
-        <Button
-          color="blue"
-          title="Medium"
-          onPress={() => dispatch(setDifficulty("medium"))}
-        />
-        <Button
-          color="red"
-          title="Hard"
-          onPress={() => dispatch(setDifficulty("hard"))}
-        />
-      </View>
       <Text style={styles.name}>Hi, {name}</Text>
       <View style={styles.container1}>
         {board.map((ele, i) => {
           return (
-            <View key={i} style={styles.boxder}>
+            <View key={i} style={{ borderWidth: 2, width: 40 }}>
               {board[i].map((e2, j) => {
                 return (
                   <TextInput
@@ -162,8 +140,9 @@ const Board = (props) => {
                     style={styles.boxder1}
                     maxLength={1}
                     editable={String(e2) !== "0" ? false : true}
-                    keyboardType="number-pad"
+                    keyboardType="numeric"
                     value={String(e2) !== "0" ? String(e2) : null}
+                    // textContentType='telephoneNumber'
                     onChange={(e) => {
                       const num = Number(e.nativeEvent.text);
                       const newBoard = board2.map((e3, k) => {
